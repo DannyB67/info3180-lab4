@@ -6,8 +6,8 @@
 {% include 'flash_messages.html' %}
 <ul>
   {# Loop through the list of uploaded files and display them as links #}
-  {% for file in files %}
-    <li><a href="{{ url_for('get_image', filename=file) }}">{{ file }}</a></li>
+  {% for image in image_list %}
+    <li><img src="{{ url_for('get_image', filename=image) }}" alt="{{ image }}" width="200"> {{ image }}</li>
   {% endfor %}
 </ul>
 {% endblock %}
