@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<h1 class="page-header">Uploaded Files</h1>
+
+{% include 'flash_messages.html' %}
+<ul>
+  {# Loop through the list of uploaded files and display them as links #}
+  {% for file in files %}
+    <li><a href="{{ url_for('get_image', filename=file) }}">{{ file }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

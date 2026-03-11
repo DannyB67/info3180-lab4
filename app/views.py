@@ -2,7 +2,7 @@ import os
 from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash, session, abort
 from flask_login import login_user, logout_user, current_user, login_required
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename, send_from_directory
 from app.models import UserProfile
 from app.forms import LoginForm
 from app.forms import UploadForm
@@ -73,11 +73,32 @@ def login():
         return redirect(url_for("upload"))  # The user should be redirected to the upload form instead
     return render_template("login.html", form=form)
 
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename)
+
+@app.route('/files')
+def files():
+    image_list = get_uploaded_images()
+
+    return render_template('files.html', image_list=image_list)
+
 # user_loader callback. This callback is used to reload the user object from
 # the user ID stored in the session
 @login_manager.user_loader
 def load_user(id):
     return db.session.execute(db.select(UserProfile).filter_by(id=id)).scalar()
+
+
+def get_uploaded_images():
+    upload_folder = os.path.join(os.getcwd(), 'uploads')
+    image_list = []
+
+    for file in os.listdir(upload_folder):
+        if file.lower().endswith(('.png', '.jpg')):
+            image_list.append(file)
+
+    return image_list
 
 ###
 # The functions below should be applicable to all Flask apps.
